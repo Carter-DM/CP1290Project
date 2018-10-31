@@ -30,6 +30,7 @@ class Player {
     /**
      * Spawn function
      * <p>Draws the respective player at the default starting position
+     *
      * @param context
      * @param canvas
      */
@@ -54,6 +55,10 @@ class Player {
 
     goRight() {
         // goRight will be called on right key press
+    }
+
+    goDown() {
+        // goDown will be called on by downward key press
     }
 
     attack() {
