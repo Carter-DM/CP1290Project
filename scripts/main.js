@@ -1,12 +1,78 @@
 $(document).ready(function () {
+    /**
+     * ===========================
+     *     GAME INITIALIZATION
+     * ===========================
+     */
+    // Getting the fps of browser to determine animation speed
+    var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    window.requestAnimationFrame = requestAnimationFrame;
 
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
-    var player1 = new Player(1, "red");
-    var player2 = new Player(2, "blue");
-    player1.spawn(context, canvas);
-    player2.spawn(context, canvas);
+    // Player creation, players must have a dimension, a color, a speed and a starting position
+    var PLAYER_SIZE = 50;
+    var PLAYER_SPEED = 10;
+
+    var PLAYER1_STARTX = canvas.width - canvas.width * .8;
+    var PLAYER1_STARTY = canvas.height - 150;
+    var PLAYER2_STARTX = canvas.width - canvas.width * .25;
+    var PLAYER2_STARTY = canvas.height - 150;
+
+    var player1 = new Player(1, "red", PLAYER_SIZE, PLAYER_SPEED, PLAYER1_STARTX, PLAYER1_STARTY);
+    var player2 = new Player(2, "blue", PLAYER_SIZE, PLAYER_SPEED, PLAYER2_STARTX, PLAYER2_STARTY);
+
+    // Initial spawning of Players
+    player1.draw(context);
+    player2.draw(context);
+
+    // Dictionary that will be filled with key presses
+    var keys = {};
+
+    window.addEventListener('keydown', function (e) {
+        // TODO: keyCode is deprecated, consider using alternative
+        keys[e.keyCode] = true;
+    });
+
+    window.addEventListener('keyup', function (e) {
+        // TODO: keyCode is deprecated, consider using alternative
+        keys[e.keyCode] = false;
+    });
+
+    gameLoop();
+
+    /**
+     * ==============================
+     *        MAIN GAME LOOP
+     * ==============================
+     */
+    function gameLoop() {
+        getKeyPresses();
+
+        requestAnimationFrame(gameLoop)
+    }
+
+    function getKeyPresses() {
+        if (keys[87]) {
+            console.log("w - Player 1 up");
+            player1.jump(context);
+        }
+        if (keys[65]) {
+            console.log("a - Player 1 left");
+            player1.goLeft(context);
+        }
+        if (keys[68]) {
+            console.log("d - Player 1 right");
+            player1.goRight(context);
+        }
+        if (keys[83]) {
+            console.log("s - Player 1 down");
+            player1.goDown(context);
+        }
+
+        // TODO; Add remaining key press events
+    }
 
 });
 
@@ -22,47 +88,61 @@ class Player {
      * @param playerNumber
      * @param playerColor
      */
-    constructor(playerNumber, playerColor) {
+    constructor(playerNumber, playerColor, playerSize, playerSpeed, playerStartX, playerStartY) {
         this.playerNumber = playerNumber;
         this.playerColor = playerColor;
+        this.playerSize = playerSize;
+        this.playerSpeed = playerSpeed;
+        this.playerX = playerStartX;
+        this.playerY = playerStartY;
     }
 
-    /**
-     * Spawn function
-     * <p>Draws the respective player at the default starting position
-     *
-     * @param context
-     * @param canvas
-     */
-    spawn(context, canvas) {
+    draw(context) {
+        // TODO: Add check to see if still within dimensions of canvas
         if (this.playerNumber == 1) {
             context.fillStyle = this.playerColor;
-            context.fillRect(canvas.width - canvas.width * .8, canvas.height - 150, 50, 50);
+            context.fillRect(this.playerX, this.playerY, this.playerSize, this.playerSize);
         }
         else {
             context.fillStyle = this.playerColor;
-            context.fillRect(canvas.width - canvas.width * .25, canvas.height - 150, 50, 50);
+            context.fillRect(this.playerX, this.playerY, this.playerSize, this.playerSize);
         }
     }
 
-    jump() {
-        // Jump will be called on up key press
+    // TODO: Alter movement calculation based on framerate
+
+    // TODO: Determine a way to not clear other player on overlap
+
+    jump(context) {
+        this.clear(context);
+        this.playerY -= this.playerSpeed;
+        this.draw(context);
     }
 
-    goLeft() {
-        // goLeft will be called on left key press
+    goLeft(context) {
+        this.clear(context);
+        this.playerX -= this.playerSpeed;
+        this.draw(context);
     }
 
-    goRight() {
-        // goRight will be called on right key press
+    goRight(context) {
+        this.clear(context);
+        this.playerX += this.playerSpeed;
+        this.draw(context);
     }
 
-    goDown() {
-        // goDown will be called on by downward key press
+    goDown(context) {
+        this.clear(context);
+        this.playerY += this.playerSpeed;
+        this.draw(context);
     }
 
     attack() {
         // attack will be called on attack key press
         // TODO: Possibly have different attacks depending on direction/movement?
+    }
+
+    clear(context) {
+        context.clearRect(this.playerX, this.playerY, this.playerSize, this.playerSize);
     }
 }
