@@ -70,8 +70,23 @@ $(document).ready(function () {
             console.log("s - Player 1 down");
             player1.goDown(context);
         }
-
-        // TODO; Add remaining key press events
+        if (keys[38]) {
+            console.log("up arrow - Player 2 up");
+            player2.jump(context);
+        }
+        if (keys[37]) {
+            console.log("left arrow - Player 2 left");
+            player2.goLeft(context);
+        }
+        if (keys[39]) {
+            console.log("right arrow - Player 2 right");
+            player2.goRight(context);
+        }
+        if (keys[40]) {
+            console.log("down arrow - Player 2 down");
+            player2.goDown(context);
+        }
+        // TODO: Attack keys
     }
 
 });
