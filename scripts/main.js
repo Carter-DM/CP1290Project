@@ -4,21 +4,24 @@ $(document).ready(function () {
      *     GAME INITIALIZATION
      * ===========================
      */
-    // Getting the fps of browser to determine animation speed
+        // Getting the fps of browser to determine animation speed
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
     window.requestAnimationFrame = requestAnimationFrame;
 
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
+    context.fillStyle = "black";
+    context.fillRect(0, canvas.height + 600, canvas.width, canvas.height);
+
     // Player creation, players must have a dimension, a color, a speed and a starting position
     var PLAYER_SIZE = 50;
     var PLAYER_SPEED = 10;
 
     var PLAYER1_STARTX = canvas.width - canvas.width * .8;
-    var PLAYER1_STARTY = canvas.height - 150;
+    var PLAYER1_STARTY = canvas.height - 200;
     var PLAYER2_STARTX = canvas.width - canvas.width * .25;
-    var PLAYER2_STARTY = canvas.height - 150;
+    var PLAYER2_STARTY = canvas.height - 200;
 
     var player1 = new Player(1, "red", PLAYER_SIZE, PLAYER_SPEED, PLAYER1_STARTX, PLAYER1_STARTY);
     var player2 = new Player(2, "blue", PLAYER_SIZE, PLAYER_SPEED, PLAYER2_STARTX, PLAYER2_STARTY);
@@ -130,25 +133,33 @@ class Player {
 
     jump(context) {
         this.clear(context);
-        this.playerY -= this.playerSpeed;
+        if (this.playerY > 0){
+            this.playerY -= this.playerSpeed;
+        }
         this.draw(context);
     }
 
     goLeft(context) {
         this.clear(context);
-        this.playerX -= this.playerSpeed;
+        if (this.playerX > 0) {
+            this.playerX -= this.playerSpeed;
+        }
         this.draw(context);
     }
 
     goRight(context) {
         this.clear(context);
-        this.playerX += this.playerSpeed;
+        if (this.playerX + this.playerSize < 1200) {
+            this.playerX += this.playerSpeed;
+        }
         this.draw(context);
     }
 
     goDown(context) {
         this.clear(context);
-        this.playerY += this.playerSpeed;
+        if (this.playerY + this.playerSize < 650) {
+            this.playerY += this.playerSpeed;
+        }
         this.draw(context);
     }
 
