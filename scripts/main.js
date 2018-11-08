@@ -4,7 +4,7 @@ $(document).ready(function () {
      *     GAME INITIALIZATION
      * ===========================
      */
-        // Getting the fps of browser to determine animation speed
+    // Getting the fps of browser to determine animation speed
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
     window.requestAnimationFrame = requestAnimationFrame;
 
@@ -25,6 +25,10 @@ $(document).ready(function () {
 
     var player1 = new Player(1, "red", PLAYER_SIZE, PLAYER_SPEED, PLAYER1_STARTX, PLAYER1_STARTY);
     var player2 = new Player(2, "blue", PLAYER_SIZE, PLAYER_SPEED, PLAYER2_STARTX, PLAYER2_STARTY);
+
+    player1.setOtherPlayer(player2);
+    player2.setOtherPlayer(player1);
+
 
     // Initial spawning of Players
     player1.draw(context);
@@ -89,6 +93,10 @@ $(document).ready(function () {
             console.log("down arrow - Player 2 down");
             player2.goDown(context);
         }
+
+        // Drawing every frame regardless of movement so player's aren't drawn over
+        player1.draw(context);
+        player2.draw(context);
         // TODO: Attack keys
     }
 
@@ -113,6 +121,7 @@ class Player {
         this.playerSpeed = playerSpeed;
         this.playerX = playerStartX;
         this.playerY = playerStartY;
+        this.otherPlayer;
     }
 
     draw(context) {
@@ -127,13 +136,21 @@ class Player {
         }
     }
 
+    setOtherPlayer(otherPlayer){
+        this.otherPlayer = otherPlayer;
+    }
+
+    noPlayerCollision(){
+        return true;
+    }
+
     // TODO: Alter movement calculation based on framerate
 
     // TODO: Determine a way to not clear other player on overlap
 
     jump(context) {
         this.clear(context);
-        if (this.playerY > 0){
+        if ((this.playerY > 0) && (this.noPlayerCollision())){
             this.playerY -= this.playerSpeed;
         }
         this.draw(context);
