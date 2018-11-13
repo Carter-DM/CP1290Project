@@ -168,7 +168,7 @@ class Player {
         this.playerX += this.vx;
         this.playerY += this.vy;
         this.vy *= 0.9;
-        this.vx *= 0.9;
+        this.vx *= 0.8;
         this.draw(context);
     }
 
@@ -176,32 +176,32 @@ class Player {
         return true;
     }
 
-    jump(context) {
+    jump() {
         if ((this.playerY >= 0) && (this.isOnGround())){
             this.vy = -40;
             this.playerY += this.vy;
         }
     }
 
-    goLeft(context) {
+    goLeft() {
         if (this.playerX >= 0) {
-            this.vx -= 1;
+            this.vx -= 2;
         }
         else {
             this.vx = 0;
         }
     }
 
-    goRight(context) {
+    goRight() {
         if (this.playerX + this.playerSizeX <= 1200) {
-            this.vx += 1;
+            this.vx += 2;
         }
         else {
             this.vx = 0;
         }
     }
 
-    goDown(context) {
+    goDown() {
         if (this.playerY + this.playerSizeY <= 650) {
 
         }
