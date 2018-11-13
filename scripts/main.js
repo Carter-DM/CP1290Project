@@ -13,7 +13,6 @@ $(document).ready(function () {
     // Player creation, players must have a dimension, a color, a speed and a starting position
     const PLAYER_SIZE_X = 70;
     const PLAYER_SIZE_Y = 100;
-    const PLAYER_SPEED = 10;
     const PLAYER_VELOCITY_X = 0;
     const PLAYER_VELOCITY_Y = 0;
 
@@ -22,11 +21,20 @@ $(document).ready(function () {
     const PLAYER2_STARTX = canvas.width - canvas.width * .25;
     const PLAYER2_STARTY = canvas.height - (150 + PLAYER_SIZE_Y);
 
-    var player1 = new Player(1, "red", PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_SPEED, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER1_STARTX, PLAYER1_STARTY);
-    var player2 = new Player(2, "blue", PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_SPEED, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER2_STARTX, PLAYER2_STARTY);
+    var player1 = new Player(1, "red", PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER1_STARTX, PLAYER1_STARTY);
+    var player2 = new Player(2, "blue", PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER2_STARTX, PLAYER2_STARTY);
 
     player1.setOtherPlayer(player2);
     player2.setOtherPlayer(player1);
+
+    // Loading weapon
+    var WEAPON_RAPIER = new Image();
+
+    WEAPON_RAPIER.onload = function () {
+        player1.setWeapon(WEAPON_RAPIER);
+        player2.setWeapon(WEAPON_RAPIER);
+    };
+    WEAPON_RAPIER.src = "images/TempSword.png";
 
     // Initial spawning of Players
     player1.draw(context);
@@ -112,23 +120,22 @@ class Player {
      * @param playerColor
      * @param playerSizeX
      * @param playerSizeY
-     * @param playerSpeed
      * @param vx
      * @param vy
      * @param playerStartX
      * @param playerStartY
      */
-    constructor(playerNumber, playerColor, playerSizeX, playerSizeY, playerSpeed, vx, vy, playerStartX, playerStartY) {
+    constructor(playerNumber, playerColor, playerSizeX, playerSizeY, vx, vy, playerStartX, playerStartY) {
         this.playerNumber = playerNumber;
         this.playerColor = playerColor;
         this.playerSizeX = playerSizeX;
         this.playerSizeY = playerSizeY;
-        this.playerSpeed = playerSpeed;
         this.vx = vx;
         this.vy = vy;
         this.playerX = playerStartX;
         this.playerY = playerStartY;
         this.otherPlayer;
+        this.weaponImage;
     }
 
     draw(context) {
@@ -140,6 +147,14 @@ class Player {
             context.fillStyle = this.playerColor;
             context.fillRect(this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
         }
+    }
+
+    drawWeapon(context) {
+        context.drawImage(this.weaponImage, this.playerX + 60, this.playerY - 25);
+    }
+
+    setWeapon(weaponImage){
+        this.weaponImage = weaponImage;
     }
 
     setOtherPlayer(otherPlayer) {
@@ -166,6 +181,7 @@ class Player {
         this.vy *= 0.9;
         this.vx *= 0.8;
         this.draw(context);
+        this.drawWeapon(context);
     }
 
     otherPlayerCollision() {
