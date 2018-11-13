@@ -1,5 +1,58 @@
 /* Main stylesheet */
 
+* {
+    box-sizing: border-box;
+}
+body{
+    margin: 0 auto;
+    width: 100%;
+    width: 1240px;
+    border: solid black;
+    border-right-width: 20px;
+    border-bottom-width: 20px;
+    border-left-width: 20px;
+    background-color: white;
+}
+
+body > header{
+    width: 100%;
+}
+.logo {
+    width: 60px;
+    height: 60px;
+    vertical-align: middle;
+}
+body > header > nav > ul {
+    display: table-row;
+    background-color:black;
+}
+
+body > header > nav > ul > li{
+    width: 300px;
+    display: table-cell;
+    text-align: center;
+    color:white;
+    padding:10px;
+
+}
+body > header > nav > ul > li > a{
+    display: block;
+    color:white;
+    text-decoration: none;
+    font-family: "Calibri Light";
+    font-size: 1.2em;
+}
+body > header > nav > ul > li:hover, body > header > nav > ul > li:active{
+    color:white;
+    background-color: #494949;
+}
+
 canvas {
-    border: solid black 1px;
+    border-top: solid black 1px;
+    border-bottom: solid black 1px;
+    display: block;
+}
+
+h2 {
+    font-family: "Calibri Light";
 }

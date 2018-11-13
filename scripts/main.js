@@ -4,7 +4,7 @@ $(document).ready(function () {
      *     GAME INITIALIZATION
      * ===========================
      */
-    // Getting the fps of browser to determine animation speed
+        // Getting the fps of browser to determine animation speed
     var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
     window.requestAnimationFrame = requestAnimationFrame;
 
@@ -15,20 +15,22 @@ $(document).ready(function () {
     context.fillRect(0, canvas.height + 600, canvas.width, canvas.height);
 
     // Player creation, players must have a dimension, a color, a speed and a starting position
-    var PLAYER_SIZE = 50;
-    var PLAYER_SPEED = 10;
+    const PLAYER_SIZE_X = 60;
+    const PLAYER_SIZE_Y = 80;
+    const PLAYER_SPEED = 10;
+    const PLAYER_VELOCITY_X = 0;
+    const PLAYER_VELOCITY_Y = 0;
 
-    var PLAYER1_STARTX = canvas.width - canvas.width * .8;
-    var PLAYER1_STARTY = canvas.height - 200;
-    var PLAYER2_STARTX = canvas.width - canvas.width * .25;
-    var PLAYER2_STARTY = canvas.height - 200;
+    const PLAYER1_STARTX = canvas.width - canvas.width * .8;
+    const PLAYER1_STARTY = canvas.height - (150 + PLAYER_SIZE_Y);
+    const PLAYER2_STARTX = canvas.width - canvas.width * .25;
+    const PLAYER2_STARTY = canvas.height - (150 + PLAYER_SIZE_Y);
 
-    var player1 = new Player(1, "red", PLAYER_SIZE, PLAYER_SPEED, PLAYER1_STARTX, PLAYER1_STARTY);
-    var player2 = new Player(2, "blue", PLAYER_SIZE, PLAYER_SPEED, PLAYER2_STARTX, PLAYER2_STARTY);
+    var player1 = new Player(1, "red", PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_SPEED, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER1_STARTX, PLAYER1_STARTY);
+    var player2 = new Player(2, "blue", PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_SPEED, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER2_STARTX, PLAYER2_STARTY);
 
     player1.setOtherPlayer(player2);
     player2.setOtherPlayer(player1);
-
 
     // Initial spawning of Players
     player1.draw(context);
@@ -55,9 +57,12 @@ $(document).ready(function () {
      * ==============================
      */
     function gameLoop() {
-        getKeyPresses();
-
-        requestAnimationFrame(gameLoop)
+        setInterval(function(){
+            getKeyPresses();
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            player2.update(context);
+            player1.update(context);
+        }, (1000/60));
     }
 
     function getKeyPresses() {
@@ -94,9 +99,6 @@ $(document).ready(function () {
             player2.goDown(context);
         }
 
-        // Drawing every frame regardless of movement so player's aren't drawn over
-        player1.draw(context);
-        player2.draw(context);
         // TODO: Attack keys
     }
 
@@ -109,75 +111,103 @@ $(document).ready(function () {
  */
 class Player {
     /**
-     * Player constructor
      *
      * @param playerNumber
      * @param playerColor
+     * @param playerSizeX
+     * @param playerSizeY
+     * @param playerSpeed
+     * @param vx
+     * @param vy
+     * @param playerStartX
+     * @param playerStartY
      */
-    constructor(playerNumber, playerColor, playerSize, playerSpeed, playerStartX, playerStartY) {
+    constructor(playerNumber, playerColor, playerSizeX, playerSizeY, playerSpeed, vx, vy, playerStartX, playerStartY) {
         this.playerNumber = playerNumber;
         this.playerColor = playerColor;
-        this.playerSize = playerSize;
+        this.playerSizeX = playerSizeX;
+        this.playerSizeY = playerSizeY;
         this.playerSpeed = playerSpeed;
+        this.vx = vx;
+        this.vy = vy;
         this.playerX = playerStartX;
         this.playerY = playerStartY;
         this.otherPlayer;
     }
 
     draw(context) {
-        // TODO: Add check to see if still within dimensions of canvas
         if (this.playerNumber == 1) {
             context.fillStyle = this.playerColor;
-            context.fillRect(this.playerX, this.playerY, this.playerSize, this.playerSize);
+            context.fillRect(this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
         }
         else {
             context.fillStyle = this.playerColor;
-            context.fillRect(this.playerX, this.playerY, this.playerSize, this.playerSize);
+            context.fillRect(this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
         }
     }
 
-    setOtherPlayer(otherPlayer){
+    setOtherPlayer(otherPlayer) {
         this.otherPlayer = otherPlayer;
     }
 
-    noPlayerCollision(){
+    isOnGround() {
+        if ((this.playerY + this.playerSizeY) >= (canvas.height - 150)) {
+            return true;
+        }
+        return false;
+    }
+
+    update(context){
+        if (this.isOnGround()){
+            this.vy = 0;
+            this.playerY = canvas.height - (150 + this.playerSizeY);
+        }
+        else{
+            this.vy += 2.5;
+        }
+        this.playerX += this.vx;
+        this.playerY += this.vy;
+        this.vy *= 0.9;
+        this.vx *= 0.9;
+        this.draw(context);
+    }
+
+    otherPlayerCollision() {
         return true;
     }
 
-    // TODO: Alter movement calculation based on framerate
-
-    // TODO: Determine a way to not clear other player on overlap
-
     jump(context) {
-        this.clear(context);
-        if ((this.playerY > 0) && (this.noPlayerCollision())){
-            this.playerY -= this.playerSpeed;
+        if ((this.playerY >= 0) && (this.isOnGround())){
+            this.vy = -40;
+            this.playerY += this.vy;
         }
-        this.draw(context);
     }
 
     goLeft(context) {
-        this.clear(context);
-        if (this.playerX > 0) {
-            this.playerX -= this.playerSpeed;
+        if (this.playerX >= 0) {
+            this.vx -= 1;
         }
-        this.draw(context);
+        else {
+            this.vx = 0;
+        }
     }
 
     goRight(context) {
-        this.clear(context);
-        if (this.playerX + this.playerSize < 1200) {
-            this.playerX += this.playerSpeed;
+        if (this.playerX + this.playerSizeX <= 1200) {
+            this.vx += 1;
         }
-        this.draw(context);
+        else {
+            this.vx = 0;
+        }
     }
 
     goDown(context) {
-        this.clear(context);
-        if (this.playerY + this.playerSize < 650) {
-            this.playerY += this.playerSpeed;
+        if (this.playerY + this.playerSizeY <= 650) {
+
         }
-        this.draw(context);
+        else{
+            // crouch
+        }
     }
 
     attack() {
@@ -186,6 +216,6 @@ class Player {
     }
 
     clear(context) {
-        context.clearRect(this.playerX, this.playerY, this.playerSize, this.playerSize);
+        context.clearRect(this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
     }
 }
