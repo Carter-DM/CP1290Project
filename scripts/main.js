@@ -4,10 +4,6 @@ $(document).ready(function () {
      *     GAME INITIALIZATION
      * ===========================
      */
-        // Getting the fps of browser to determine animation speed
-    var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-    window.requestAnimationFrame = requestAnimationFrame;
-
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
