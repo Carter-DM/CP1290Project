@@ -15,8 +15,8 @@ $(document).ready(function () {
     context.fillRect(0, canvas.height + 600, canvas.width, canvas.height);
 
     // Player creation, players must have a dimension, a color, a speed and a starting position
-    const PLAYER_SIZE_X = 60;
-    const PLAYER_SIZE_Y = 80;
+    const PLAYER_SIZE_X = 70;
+    const PLAYER_SIZE_Y = 100;
     const PLAYER_SPEED = 10;
     const PLAYER_VELOCITY_X = 0;
     const PLAYER_VELOCITY_Y = 0;
@@ -185,7 +185,7 @@ class Player {
 
     goLeft() {
         if (this.playerX >= 0) {
-            this.vx -= 2;
+            this.vx -= 2.5;
         }
         else {
             this.vx = 0;
@@ -194,7 +194,7 @@ class Player {
 
     goRight() {
         if (this.playerX + this.playerSizeX <= 1200) {
-            this.vx += 2;
+            this.vx += 2.5;
         }
         else {
             this.vx = 0;
