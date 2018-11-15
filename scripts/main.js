@@ -24,22 +24,17 @@ $(document).ready(function () {
     player1.setOtherPlayer(player2);
     player2.setOtherPlayer(player1);
 
-    // TODO: Have each spritesheet set as a respective this.animation_idle, this.animation_jump etc. for easy animation changes
-    // Setting player1 to idle animation
-    var player1_idle = new Image();
-    player1_idle.onload = function () {
-        player1.setCurrentAnimation(player1_idle);
-    }
-    player1_idle.src = "images/Player1_Idle_x2_Spritesheet.png";
+    // Loading in each spritesheet
+    loadAnimations(player1, player2);
 
     var spriteCoordinates =
         [[0, 0, 140, 170],      // Frame 0
-        [140, 0, 140, 170],     // Frame 1
-        [280, 0, 140, 170],     // Frame 2
-        [0, 170, 140, 170],     // Frame 3
-        [140, 170, 140, 170],   // Frame 4
-        [280, 170, 140, 170]    // Frame 5
-    ];
+            [140, 0, 140, 170],     // Frame 1
+            [280, 0, 140, 170],     // Frame 2
+            [0, 170, 140, 170],     // Frame 3
+            [140, 170, 140, 170],   // Frame 4
+            [280, 170, 140, 170]    // Frame 5
+        ];
 
     // Loading weapon
     var WEAPON_RAPIER = new Image();
@@ -73,6 +68,17 @@ $(document).ready(function () {
     function gameLoop() {
         var currentFrame = 0;
         setInterval(function () {
+            if (player1.playerX <= player2.playerX){
+                player1.setReverse(true);
+                player2.setReverse(false);
+            }
+            else{
+                player1.setReverse(false);
+                player2.setReverse(true);
+            }
+            player1.setCurrentAnimation("idle");
+            player2.setCurrentAnimation("idle");
+
             getKeyPresses();
             context.clearRect(0, 0, canvas.width, canvas.height);
             player2.update(context);
@@ -82,7 +88,8 @@ $(document).ready(function () {
                 currentFrame = 0;
             }
             if (currentFrame % 10 == 0) {
-                player1.updateFrame(spriteCoordinates[Math.floor(currentFrame/10)]);
+                player1.updateFrame(spriteCoordinates[Math.floor(currentFrame / 10)]);
+                player2.updateFrame(spriteCoordinates[Math.floor(currentFrame / 10)]);
             }
         }, (1000 / 60));
     }
@@ -124,6 +131,14 @@ $(document).ready(function () {
         // TODO: Attack keys
     }
 
+    function loadAnimations(player1, player2){
+        player1.loadAnimation("idle", "images/Player1/Player1_Idle.png");
+        player1.loadAnimation("idle_rev", "images/Player1/Player1_Idle_Rev.png");
+
+        player2.loadAnimation("idle", "images/Player2/Player2_Idle.png");
+        player2.loadAnimation("idle_rev", "images/Player2/Player2_Idle_Rev.png");
+    }
+
 });
 
 /**
@@ -153,6 +168,8 @@ class Player {
         this.playerX = playerStartX;
         this.playerY = playerStartY;
         this.animation;
+        this.animationMap = new Map();
+        this.reverseAnimation;
         this.sprite_x;
         this.sprite_y;
         this.sprite_w;
@@ -162,21 +179,33 @@ class Player {
     }
 
     draw(context) {
-        if (this.playerNumber == 1) {
-            context.fillStyle = this.playerColor;
-            context.drawImage(this.animation, this.sprite_x, this.sprite_y, this.sprite_w, this.sprite_h, this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
-        }
-        else {
-            context.fillStyle = this.playerColor;
-            context.fillRect(this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
-        }
+        context.drawImage(this.animation, this.sprite_x, this.sprite_y, this.sprite_w, this.sprite_h, this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
     }
 
     setCurrentAnimation(animation) {
-        this.animation = animation;
+        if (this.reverseAnimation){
+            this.animation = this.animationMap.get(animation+"_rev");
+        }
+        else {
+            this.animation = this.animationMap.get(animation);
+        }
     }
 
-    updateFrame(coordinates){
+    setReverse(bool){
+        this.reverseAnimation = bool;
+    }
+
+    addAnimation(name, spritesheet) {
+        this.animationMap.set(name, spritesheet);
+    }
+
+    loadAnimation(name, spritesheet) {
+        var image = new Image();
+        image.src = spritesheet;
+        image.onload = this.addAnimation(name, image);
+    }
+
+    updateFrame(coordinates) {
         this.sprite_x = coordinates[0];
         this.sprite_y = coordinates[1];
         this.sprite_w = coordinates[2];
