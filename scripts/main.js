@@ -7,12 +7,9 @@ $(document).ready(function () {
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
-    context.fillStyle = "black";
-    context.fillRect(0, canvas.height + 600, canvas.width, canvas.height);
-
     // Player creation, players must have a dimension, a color, a speed and a starting position
-    const PLAYER_SIZE_X = 70;
-    const PLAYER_SIZE_Y = 100;
+    const PLAYER_SIZE_X = 140;
+    const PLAYER_SIZE_Y = 170;
     const PLAYER_VELOCITY_X = 0;
     const PLAYER_VELOCITY_Y = 0;
 
@@ -27,6 +24,23 @@ $(document).ready(function () {
     player1.setOtherPlayer(player2);
     player2.setOtherPlayer(player1);
 
+    // TODO: Have each spritesheet set as a respective this.animation_idle, this.animation_jump etc. for easy animation changes
+    // Setting player1 to idle animation
+    var player1_idle = new Image();
+    player1_idle.onload = function () {
+        player1.setCurrentAnimation(player1_idle);
+    }
+    player1_idle.src = "images/Player1_Idle_x2_Spritesheet.png";
+
+    var spriteCoordinates =
+        [[0, 0, 140, 170],      // Frame 0
+        [140, 0, 140, 170],     // Frame 1
+        [280, 0, 140, 170],     // Frame 2
+        [0, 170, 140, 170],     // Frame 3
+        [140, 170, 140, 170],   // Frame 4
+        [280, 170, 140, 170]    // Frame 5
+    ];
+
     // Loading weapon
     var WEAPON_RAPIER = new Image();
 
@@ -35,10 +49,6 @@ $(document).ready(function () {
         player2.setWeapon(WEAPON_RAPIER);
     };
     WEAPON_RAPIER.src = "images/TempSword.png";
-
-    // Initial spawning of Players
-    player1.draw(context);
-    player2.draw(context);
 
     // Dictionary that will be filled with key presses
     var keys = {};
@@ -61,12 +71,20 @@ $(document).ready(function () {
      * ==============================
      */
     function gameLoop() {
-        setInterval(function(){
+        var currentFrame = 0;
+        setInterval(function () {
             getKeyPresses();
             context.clearRect(0, 0, canvas.width, canvas.height);
             player2.update(context);
             player1.update(context);
-        }, (1000/60));
+            currentFrame++;
+            if (currentFrame == 60) {
+                currentFrame = 0;
+            }
+            if (currentFrame % 10 == 0) {
+                player1.updateFrame(spriteCoordinates[Math.floor(currentFrame/10)]);
+            }
+        }, (1000 / 60));
     }
 
     function getKeyPresses() {
@@ -134,6 +152,11 @@ class Player {
         this.vy = vy;
         this.playerX = playerStartX;
         this.playerY = playerStartY;
+        this.animation;
+        this.sprite_x;
+        this.sprite_y;
+        this.sprite_w;
+        this.sprite_h;
         this.otherPlayer;
         this.weaponImage;
     }
@@ -141,7 +164,7 @@ class Player {
     draw(context) {
         if (this.playerNumber == 1) {
             context.fillStyle = this.playerColor;
-            context.fillRect(this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
+            context.drawImage(this.animation, this.sprite_x, this.sprite_y, this.sprite_w, this.sprite_h, this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
         }
         else {
             context.fillStyle = this.playerColor;
@@ -149,11 +172,22 @@ class Player {
         }
     }
 
+    setCurrentAnimation(animation) {
+        this.animation = animation;
+    }
+
+    updateFrame(coordinates){
+        this.sprite_x = coordinates[0];
+        this.sprite_y = coordinates[1];
+        this.sprite_w = coordinates[2];
+        this.sprite_h = coordinates[3];
+    }
+
     drawWeapon(context) {
         context.drawImage(this.weaponImage, this.playerX + 60, this.playerY - 25);
     }
 
-    setWeapon(weaponImage){
+    setWeapon(weaponImage) {
         this.weaponImage = weaponImage;
     }
 
@@ -168,12 +202,12 @@ class Player {
         return false;
     }
 
-    update(context){
-        if (this.isOnGround()){
+    update(context) {
+        if (this.isOnGround()) {
             this.vy = 0;
             this.playerY = canvas.height - (150 + this.playerSizeY);
         }
-        else{
+        else {
             this.vy += 2.5;
         }
         this.playerX += this.vx;
@@ -181,7 +215,7 @@ class Player {
         this.vy *= 0.9;
         this.vx *= 0.8;
         this.draw(context);
-        this.drawWeapon(context);
+        //this.drawWeapon(context);
     }
 
     otherPlayerCollision() {
@@ -189,7 +223,7 @@ class Player {
     }
 
     jump() {
-        if ((this.playerY >= 0) && (this.isOnGround())){
+        if ((this.playerY >= 0) && (this.isOnGround())) {
             this.vy = -40;
             this.playerY += this.vy;
         }
@@ -217,7 +251,7 @@ class Player {
         if (this.playerY + this.playerSizeY <= 650) {
 
         }
-        else{
+        else {
             // crouch
         }
     }
