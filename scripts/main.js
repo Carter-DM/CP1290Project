@@ -107,10 +107,6 @@ $(document).ready(function () {
             console.log("d - Player 1 right");
             player1.goRight(context);
         }
-        if (keys[83]) {
-            console.log("s - Player 1 down");
-            player1.goDown(context);
-        }
         if (keys[38]) {
             console.log("up arrow - Player 2 up");
             player2.jump(context);
@@ -122,10 +118,6 @@ $(document).ready(function () {
         if (keys[39]) {
             console.log("right arrow - Player 2 right");
             player2.goRight(context);
-        }
-        if (keys[40]) {
-            console.log("down arrow - Player 2 down");
-            player2.goDown(context);
         }
 
         // TODO: Attack keys
@@ -273,15 +265,6 @@ class Player {
         }
         else {
             this.vx = 0;
-        }
-    }
-
-    goDown() {
-        if (this.playerY + this.playerSizeY <= 650) {
-
-        }
-        else {
-            // crouch
         }
     }
 
