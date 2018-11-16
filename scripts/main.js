@@ -102,10 +102,13 @@ $(document).ready(function () {
         if (keys[65]) {
             console.log("a - Player 1 left");
             player1.goLeft(context);
+            // TODO: If moving towards other player then forward, else back up
+            player1.setCurrentAnimation("forward");
         }
         if (keys[68]) {
             console.log("d - Player 1 right");
             player1.goRight(context);
+            player1.setCurrentAnimation("forward");
         }
         if (keys[38]) {
             console.log("up arrow - Player 2 up");
@@ -114,10 +117,12 @@ $(document).ready(function () {
         if (keys[37]) {
             console.log("left arrow - Player 2 left");
             player2.goLeft(context);
+            player2.setCurrentAnimation("forward");
         }
         if (keys[39]) {
             console.log("right arrow - Player 2 right");
             player2.goRight(context);
+            player2.setCurrentAnimation("forward");
         }
 
         // TODO: Attack keys
@@ -126,9 +131,13 @@ $(document).ready(function () {
     function loadAnimations(player1, player2){
         player1.loadAnimation("idle", "images/Player1/Player1_Idle.png");
         player1.loadAnimation("idle_rev", "images/Player1/Player1_Idle_Rev.png");
+        player1.loadAnimation("forward", "images/Player1/Player1_Forward.png");
+        player1.loadAnimation("forward_rev", "images/Player1/Player1_Forward_Rev.png");
 
         player2.loadAnimation("idle", "images/Player2/Player2_Idle.png");
         player2.loadAnimation("idle_rev", "images/Player2/Player2_Idle_Rev.png");
+        player2.loadAnimation("forward", "images/Player2/Player2_Forward.png");
+        player2.loadAnimation("forward_rev", "images/Player2/Player2_Forward_Rev.png");
     }
 
 });
@@ -229,7 +238,7 @@ class Player {
             this.playerY = canvas.height - (150 + this.playerSizeY);
         }
         else {
-            this.vy += 2.5;
+            this.vy += 1.5;
         }
         this.playerX += this.vx;
         this.playerY += this.vy;
@@ -245,7 +254,7 @@ class Player {
 
     jump() {
         if ((this.playerY >= 0) && (this.isOnGround())) {
-            this.vy = -40;
+            this.vy = -50;
             this.playerY += this.vy;
         }
     }
