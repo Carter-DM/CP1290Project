@@ -27,7 +27,7 @@ $(document).ready(function () {
     // Loading in each spritesheet
     loadAnimations(player1, player2);
 
-    var spriteCoordinates =
+    var playerSpriteCoordinates =
         [[0, 0, 140, 170],      // Frame 0
             [140, 0, 140, 170],     // Frame 1
             [280, 0, 140, 170],     // Frame 2
@@ -36,14 +36,14 @@ $(document).ready(function () {
             [280, 170, 140, 170]    // Frame 5
         ];
 
-    // Loading weapon
-    var WEAPON_RAPIER = new Image();
-
-    WEAPON_RAPIER.onload = function () {
-        player1.setWeapon(WEAPON_RAPIER);
-        player2.setWeapon(WEAPON_RAPIER);
-    };
-    WEAPON_RAPIER.src = "images/TempSword.png";
+    var swordIdleCoordinates =
+        [[0, 0, 60, 170],       // Frame 0
+            [60, 0, 60, 170],       // Frame 1
+            [120, 0, 60, 170],      // Frame 2
+            [180, 0, 60, 170],      // Frame 3
+            [0, 170, 60, 170],      // Frame 4
+            [60, 170, 60, 170]      // Frame 5
+        ];
 
     // Dictionary that will be filled with key presses
     var keys = {};
@@ -68,16 +68,18 @@ $(document).ready(function () {
     function gameLoop() {
         var currentFrame = 0;
         setInterval(function () {
-            if (player1.playerX <= player2.playerX){
+            if (player1.playerX <= player2.playerX) {
                 player1.setReverse(true);
                 player2.setReverse(false);
             }
-            else{
+            else {
                 player1.setReverse(false);
                 player2.setReverse(true);
             }
             player1.setCurrentAnimation("idle");
             player2.setCurrentAnimation("idle");
+            player1.setWeapon("sword_idle");
+            player2.setWeapon("sword_idle");
 
             getKeyPresses();
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -88,8 +90,10 @@ $(document).ready(function () {
                 currentFrame = 0;
             }
             if (currentFrame % 10 == 0) {
-                player1.updateFrame(spriteCoordinates[Math.floor(currentFrame / 10)]);
-                player2.updateFrame(spriteCoordinates[Math.floor(currentFrame / 10)]);
+                player1.updateFrame(playerSpriteCoordinates[Math.floor(currentFrame / 10)]);
+                player2.updateFrame(playerSpriteCoordinates[Math.floor(currentFrame / 10)]);
+                player1.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                player2.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
             }
         }, (1000 / 60));
     }
@@ -102,13 +106,22 @@ $(document).ready(function () {
         if (keys[65]) {
             console.log("a - Player 1 left");
             player1.goLeft(context);
-            // TODO: If moving towards other player then forward, else back up
-            player1.setCurrentAnimation("forward");
+            if (player1.reverseAnimation) {
+                player1.setCurrentAnimation("backwards");
+            }
+            else {
+                player1.setCurrentAnimation("forward");
+            }
         }
         if (keys[68]) {
             console.log("d - Player 1 right");
             player1.goRight(context);
-            player1.setCurrentAnimation("forward");
+            if (player1.reverseAnimation) {
+                player1.setCurrentAnimation("forward");
+            }
+            else {
+                player1.setCurrentAnimation("backwards");
+            }
         }
         if (keys[38]) {
             console.log("up arrow - Player 2 up");
@@ -117,24 +130,36 @@ $(document).ready(function () {
         if (keys[37]) {
             console.log("left arrow - Player 2 left");
             player2.goLeft(context);
-            player2.setCurrentAnimation("forward");
+            if (player2.reverseAnimation) {
+                player2.setCurrentAnimation("backwards");
+            }
+            else {
+                player2.setCurrentAnimation("forward");
+            }
         }
         if (keys[39]) {
             console.log("right arrow - Player 2 right");
             player2.goRight(context);
-            player2.setCurrentAnimation("forward");
+            if (player2.reverseAnimation) {
+                player2.setCurrentAnimation("forward");
+            }
+            else {
+                player2.setCurrentAnimation("backwards");
+            }
         }
 
         // TODO: Attack keys
     }
 
-    function loadAnimations(player1, player2){
+    function loadAnimations(player1, player2) {
         player1.loadAnimation("idle", "images/Player1/Player1_Idle.png");
         player1.loadAnimation("idle_rev", "images/Player1/Player1_Idle_Rev.png");
         player1.loadAnimation("forward", "images/Player1/Player1_Forward.png");
         player1.loadAnimation("forward_rev", "images/Player1/Player1_Forward_Rev.png");
         player1.loadAnimation("backwards", "images/Player1/Player1_Backwards.png");
         player1.loadAnimation("backwards_rev", "images/Player1/Player1_Backwards_Rev.png");
+        player1.loadAnimation("sword_idle", "images/Player1/Player1_Sword_Idle.png");
+        player1.loadAnimation("sword_idle_rev", "images/Player1/Player1_Sword_Idle_Rev.png");
 
         player2.loadAnimation("idle", "images/Player2/Player2_Idle.png");
         player2.loadAnimation("idle_rev", "images/Player2/Player2_Idle_Rev.png");
@@ -142,6 +167,8 @@ $(document).ready(function () {
         player2.loadAnimation("forward_rev", "images/Player2/Player2_Forward_Rev.png");
         player2.loadAnimation("backwards", "images/Player2/Player2_Backwards.png");
         player2.loadAnimation("backwards_rev", "images/Player2/Player2_Backwards_Rev.png");
+        player2.loadAnimation("sword_idle", "images/Player2/Player2_Sword_Idle.png");
+        player2.loadAnimation("sword_idle_rev", "images/Player2/Player2_Sword_Idle_Rev.png");
     }
 
 });
@@ -181,6 +208,11 @@ class Player {
         this.sprite_h;
         this.otherPlayer;
         this.weaponImage;
+        this.sprite_wx;
+        this.sprite_wy;
+        this.sprite_ww;
+        this.sprite_wh;
+
     }
 
     draw(context) {
@@ -188,15 +220,15 @@ class Player {
     }
 
     setCurrentAnimation(animation) {
-        if (this.reverseAnimation){
-            this.animation = this.animationMap.get(animation+"_rev");
+        if (this.reverseAnimation) {
+            this.animation = this.animationMap.get(animation + "_rev");
         }
         else {
             this.animation = this.animationMap.get(animation);
         }
     }
 
-    setReverse(bool){
+    setReverse(bool) {
         this.reverseAnimation = bool;
     }
 
@@ -217,12 +249,28 @@ class Player {
         this.sprite_h = coordinates[3];
     }
 
-    drawWeapon(context) {
-        context.drawImage(this.weaponImage, this.playerX + 60, this.playerY - 25);
+    updateWeaponFrame(coordinates) {
+        this.sprite_wx = coordinates[0];
+        this.sprite_wy = coordinates[1];
+        this.sprite_ww = coordinates[2];
+        this.sprite_wh = coordinates[3];
     }
 
-    setWeapon(weaponImage) {
-        this.weaponImage = weaponImage;
+    drawWeapon(context) {
+        var x = this.playerX + this.playerSizeX - 30;
+        if (this.reverseAnimation) {
+            x = this.playerX - 30;
+        }
+        context.drawImage(this.weaponImage, this.sprite_wx, this.sprite_wy, this.sprite_ww, this.sprite_wh, x, this.playerY - 35, this.sprite_ww, this.sprite_wh);
+    }
+
+    setWeapon(weaponAnimation) {
+        if (this.reverseAnimation) {
+            this.weaponImage = this.animationMap.get(weaponAnimation + "_rev");
+        }
+        else {
+            this.weaponImage = this.animationMap.get(weaponAnimation);
+        }
     }
 
     setOtherPlayer(otherPlayer) {
@@ -249,7 +297,7 @@ class Player {
         this.vy *= 0.9;
         this.vx *= 0.8;
         this.draw(context);
-        //this.drawWeapon(context);
+        this.drawWeapon(context);
     }
 
     otherPlayerCollision() {
