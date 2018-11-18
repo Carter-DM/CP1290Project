@@ -3,6 +3,11 @@
 * {
     box-sizing: border-box;
 }
+
+html{
+    background-color: purple;
+}
+
 body{
     margin: 0 auto;
     width: 100%;

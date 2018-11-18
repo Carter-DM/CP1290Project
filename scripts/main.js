@@ -133,11 +133,15 @@ $(document).ready(function () {
         player1.loadAnimation("idle_rev", "images/Player1/Player1_Idle_Rev.png");
         player1.loadAnimation("forward", "images/Player1/Player1_Forward.png");
         player1.loadAnimation("forward_rev", "images/Player1/Player1_Forward_Rev.png");
+        player1.loadAnimation("backwards", "images/Player1/Player1_Backwards.png");
+        player1.loadAnimation("backwards_rev", "images/Player1/Player1_Backwards_Rev.png");
 
         player2.loadAnimation("idle", "images/Player2/Player2_Idle.png");
         player2.loadAnimation("idle_rev", "images/Player2/Player2_Idle_Rev.png");
         player2.loadAnimation("forward", "images/Player2/Player2_Forward.png");
         player2.loadAnimation("forward_rev", "images/Player2/Player2_Forward_Rev.png");
+        player2.loadAnimation("backwards", "images/Player2/Player2_Backwards.png");
+        player2.loadAnimation("backwards_rev", "images/Player2/Player2_Backwards_Rev.png");
     }
 
 });

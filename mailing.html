@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CP1290 Project</title>
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="game.html">Play</a></li>
+            <li><a href="mailing.html">Contact</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><input type="text" name="search" placeholder="Search"></li>
+        </ul>
+    </nav>
+</header>
+<div>
+    <h2>Stay up to date with the latest updates! Join our mailing list!</h2>
+    <form id = "mailing_form" action="mailto:dummyemail@example.com" method="post">
+        <fieldset = id="customer_info">
+        <legend>Personal Information</legend>
+        <div id="names">
+            <label for="f_name">First Name:*</label>
+            <input type="text" id="f_name" placeholder="First Name" required/>
+            <label for="l_name">Last Name:*</label>
+            <input type="text" id="l_name" placeholder="Last Name" required/>
+        </div>
+        <label id="address_label" for="address">Street address:*</label>
+        <input type="text" id="address" placeholder="Street address" required/>
+        <label id="city_label" for="city">City:*</label>
+        <input type="text" id="city" placeholder="City" required/>
+        <label id="province_label" for="province">Province:*</label>
+        <select id="province" required>
+            <option>-Select-</option>
+            <option>AB</option>
+            <option>BC</option>
+            <option>MB</option>
+            <option>NB</option>
+            <option>NL</option>
+            <option>NT</option>
+            <option>NS</option>
+            <option>NU</option>
+            <option>ON</option>
+            <option>PE</option>
+            <option>QC</option>
+            <option>SK</option>
+            <option>YT</option>
+        </select>
+        <label id="postal_code_label" for="postal_code">Postal Code:*</label>
+        <input type="text" id="postal_code" placeholder="Postal Code" required/>
+        <div id="customer_contact">
+            <label id="phone_num_label" for="phone_num">Phone Number:*</label>
+            <input type="text" id="phone_num" placeholder="(000)000-0000" required/>
+            <label for="email">Email Address:</label>
+            <input type="text" id="email" placeholder="example@gmail.com"/>
+        </div>
+        <input type="submit" value="Submit" id="submit_button"/>
+        <input type="reset" value="Reset" id="reset_button"/>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>
