@@ -27,32 +27,32 @@ $(document).ready(function () {
     // Loading in each spritesheet
     loadAnimations(player1, player2);
 
-    var playerSpriteCoordinates =
-        [[0, 0, 140, 170],      // Frame 0
-            [140, 0, 140, 170],     // Frame 1
-            [280, 0, 140, 170],     // Frame 2
-            [0, 170, 140, 170],     // Frame 3
-            [140, 170, 140, 170],   // Frame 4
-            [280, 170, 140, 170]    // Frame 5
-        ];
+    var playerSpriteCoordinates = [
+        [0, 0, 140, 170],       // Frame 0
+        [140, 0, 140, 170],     // Frame 1
+        [280, 0, 140, 170],     // Frame 2
+        [0, 170, 140, 170],     // Frame 3
+        [140, 170, 140, 170],   // Frame 4
+        [280, 170, 140, 170]    // Frame 5
+    ];
 
-    var swordIdleCoordinates =
-        [[0, 0, 60, 170],       // Frame 0
-            [60, 0, 60, 170],       // Frame 1
-            [120, 0, 60, 170],      // Frame 2
-            [180, 0, 60, 170],      // Frame 3
-            [0, 170, 60, 170],      // Frame 4
-            [60, 170, 60, 170]      // Frame 5
-        ];
+    var swordIdleCoordinates = [
+        [0, 0, 60, 170],        // Frame 0
+        [60, 0, 60, 170],       // Frame 1
+        [120, 0, 60, 170],      // Frame 2
+        [180, 0, 60, 170],      // Frame 3
+        [0, 170, 60, 170],      // Frame 4
+        [60, 170, 60, 170]      // Frame 5
+    ];
 
-    var swordAttackCoordinates =
-        [[0, 0, 170, 170],       // Frame 0
-            [170, 0, 170, 170],       // Frame 1    - Hitbox live
-            [0, 170, 170, 170],      // Frame 2     - Hitbox live
-            [170, 170, 170, 170],      // Frame 3   - Hitbox live
-            [0, 340, 170, 170],      // Frame 4
-            [170, 340, 170, 170]      // Frame 5
-        ];
+    var swordAttackCoordinates = [
+        [0, 0, 170, 170],          // Frame 0
+        [170, 0, 170, 170],        // Frame 1    - Hitbox live
+        [0, 170, 170, 170],        // Frame 2    - Hitbox live
+        [170, 170, 170, 170],      // Frame 3    - Hitbox live
+        [0, 340, 170, 170],        // Frame 4
+        [170, 340, 170, 170]       // Frame 5
+    ];
 
     // Dictionary that will be filled with key presses
     var keys = {};
@@ -372,7 +372,7 @@ class Player {
         // TODO: Check if sword intersects with other player hitbox
     }
 
-    otherPlayerWeaponCollision(){
+    otherPlayerWeaponCollision() {
         // TODO: Check if sword intersects with other player's sword
 
     }
