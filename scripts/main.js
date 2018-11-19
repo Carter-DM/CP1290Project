@@ -47,9 +47,9 @@ $(document).ready(function () {
 
     var swordAttackCoordinates =
         [[0, 0, 170, 170],       // Frame 0
-            [170, 0, 170, 170],       // Frame 1
-            [0, 170, 170, 170],      // Frame 2
-            [170, 170, 170, 170],      // Frame 3
+            [170, 0, 170, 170],       // Frame 1    - Hitbox live
+            [0, 170, 170, 170],      // Frame 2     - Hitbox live
+            [170, 170, 170, 170],      // Frame 3   - Hitbox live
             [0, 340, 170, 170],      // Frame 4
             [170, 340, 170, 170]      // Frame 5
         ];
@@ -97,6 +97,9 @@ $(document).ready(function () {
                 player1.setWeapon("sword_attack");
                 player1.updateWeaponFrame(swordAttackCoordinates[Math.floor(player1CoolDown / 10)]);
                 player1CoolDown++;
+                if ((player1CoolDown > 9) && (player1CoolDown < 40)) {
+                    // TODO: In these frames the sword hitbox is live, check for collisions
+                }
                 if (player1CoolDown == 60) {
                     player1.attacking = false;
                     player1CoolDown = 0;
@@ -109,6 +112,9 @@ $(document).ready(function () {
                 player2.setWeapon("sword_attack");
                 player2.updateWeaponFrame(swordAttackCoordinates[Math.floor(player2CoolDown / 10)]);
                 player2CoolDown++;
+                if ((player2CoolDown > 9) && (player2CoolDown < 40)) {
+                    // TODO: In these frames the sword hitbox is live, check for collisions
+                }
                 if (player2CoolDown == 60) {
                     player2.attacking = false;
                     player2CoolDown = 0;
@@ -125,7 +131,9 @@ $(document).ready(function () {
             // I could put draw weapon in update but I want to have player2's sword overlap player1
             player2.drawWeapon(context);
             player1.drawWeapon(context);
+
             currentFrame++;
+
             if (currentFrame == 60) {
                 currentFrame = 0;
             }
@@ -144,11 +152,9 @@ $(document).ready(function () {
 
     function getKeyPresses(currentFrame) {
         if (keys[87]) {
-            console.log("w - Player 1 up");
             player1.jump(context);
         }
         if (keys[65]) {
-            console.log("a - Player 1 left");
             player1.goLeft(context);
             if (player1.reverseAnimation) {
                 player1.setCurrentAnimation("backwards");
@@ -158,7 +164,6 @@ $(document).ready(function () {
             }
         }
         if (keys[68]) {
-            console.log("d - Player 1 right");
             player1.goRight(context);
             if (player1.reverseAnimation) {
                 player1.setCurrentAnimation("forward");
@@ -172,11 +177,9 @@ $(document).ready(function () {
             player1.attack(context);
         }
         if (keys[38]) {
-            console.log("up arrow - Player 2 up");
             player2.jump(context);
         }
         if (keys[37]) {
-            console.log("left arrow - Player 2 left");
             player2.goLeft(context);
             if (player2.reverseAnimation) {
                 player2.setCurrentAnimation("backwards");
@@ -186,7 +189,6 @@ $(document).ready(function () {
             }
         }
         if (keys[39]) {
-            console.log("right arrow - Player 2 right");
             player2.goRight(context);
             if (player2.reverseAnimation) {
                 player2.setCurrentAnimation("forward");
@@ -199,9 +201,6 @@ $(document).ready(function () {
             console.log("Home - Player 2 attack");
             player2.attack(context);
         }
-
-
-        // TODO: Attack keys
     }
 
     function loadAnimations(player1, player2) {
@@ -368,8 +367,14 @@ class Player {
         this.draw(context);
     }
 
+
     otherPlayerCollision() {
-        return true;
+        // TODO: Check if sword intersects with other player hitbox
+    }
+
+    otherPlayerWeaponCollision(){
+        // TODO: Check if sword intersects with other player's sword
+
     }
 
     jump() {
