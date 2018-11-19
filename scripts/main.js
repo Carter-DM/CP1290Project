@@ -7,7 +7,6 @@ $(document).ready(function () {
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
-    // Player creation, players must have a dimension, a color, a speed and a starting position
     const PLAYER_SIZE_X = 140;
     const PLAYER_SIZE_Y = 170;
     const PLAYER_VELOCITY_X = 0;
@@ -18,8 +17,8 @@ $(document).ready(function () {
     const PLAYER2_STARTX = canvas.width - canvas.width * .25;
     const PLAYER2_STARTY = canvas.height - (150 + PLAYER_SIZE_Y);
 
-    var player1 = new Player(1, "red", PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER1_STARTX, PLAYER1_STARTY);
-    var player2 = new Player(2, "blue", PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER2_STARTX, PLAYER2_STARTY);
+    var player1 = new Player(PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER1_STARTX, PLAYER1_STARTY);
+    var player2 = new Player(PLAYER_SIZE_X, PLAYER_SIZE_Y, PLAYER_VELOCITY_X, PLAYER_VELOCITY_Y, PLAYER2_STARTX, PLAYER2_STARTY);
 
     player1.setOtherPlayer(player2);
     player2.setOtherPlayer(player1);
@@ -247,7 +246,7 @@ class Player {
      * @param playerStartX
      * @param playerStartY
      */
-    constructor(playerNumber, playerColor, playerSizeX, playerSizeY, vx, vy, playerStartX, playerStartY) {
+    constructor(playerSizeX, playerSizeY, vx, vy, playerStartX, playerStartY) {
         this.playerSizeX = playerSizeX;
         this.playerSizeY = playerSizeY;
         this.vx = vx;
