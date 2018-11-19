@@ -45,6 +45,15 @@ $(document).ready(function () {
             [60, 170, 60, 170]      // Frame 5
         ];
 
+    var swordAttackCoordinates =
+        [[0, 0, 170, 170],       // Frame 0
+            [170, 0, 170, 170],       // Frame 1
+            [0, 170, 170, 170],      // Frame 2
+            [170, 170, 170, 170],      // Frame 3
+            [0, 340, 170, 170],      // Frame 4
+            [170, 340, 170, 170]      // Frame 5
+        ];
+
     // Dictionary that will be filled with key presses
     var keys = {};
 
@@ -67,6 +76,8 @@ $(document).ready(function () {
      */
     function gameLoop() {
         var currentFrame = 0;
+        var player1CoolDown = 0;
+        var player2CoolDown = 0;
         setInterval(function () {
             if (player1.playerX <= player2.playerX) {
                 player1.setReverse(true);
@@ -76,15 +87,44 @@ $(document).ready(function () {
                 player1.setReverse(false);
                 player2.setReverse(true);
             }
+
             player1.setCurrentAnimation("idle");
             player2.setCurrentAnimation("idle");
-            player1.setWeapon("sword_idle");
-            player2.setWeapon("sword_idle");
 
-            getKeyPresses();
+            getKeyPresses(currentFrame);
+
+            if (player1.attacking) {
+                player1.setWeapon("sword_attack");
+                player1.updateWeaponFrame(swordAttackCoordinates[Math.floor(player1CoolDown / 10)]);
+                player1CoolDown++;
+                if (player1CoolDown == 60) {
+                    player1.attacking = false;
+                    player1CoolDown = 0;
+                }
+            }
+            if (!player1.attacking) {
+                player1.setWeapon("sword_idle");
+            }
+            if (player2.attacking) {
+                player2.setWeapon("sword_attack");
+                player2.updateWeaponFrame(swordAttackCoordinates[Math.floor(player2CoolDown / 10)]);
+                player2CoolDown++;
+                if (player2CoolDown == 60) {
+                    player2.attacking = false;
+                    player2CoolDown = 0;
+                }
+            }
+            if (!player2.attacking) {
+                player2.setWeapon("sword_idle");
+            }
+
             context.clearRect(0, 0, canvas.width, canvas.height);
             player2.update(context);
             player1.update(context);
+
+            // I could put draw weapon in update but I want to have player2's sword overlap player1
+            player2.drawWeapon(context);
+            player1.drawWeapon(context);
             currentFrame++;
             if (currentFrame == 60) {
                 currentFrame = 0;
@@ -92,13 +132,17 @@ $(document).ready(function () {
             if (currentFrame % 10 == 0) {
                 player1.updateFrame(playerSpriteCoordinates[Math.floor(currentFrame / 10)]);
                 player2.updateFrame(playerSpriteCoordinates[Math.floor(currentFrame / 10)]);
-                player1.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
-                player2.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                if (!player1.attacking) {
+                    player1.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                }
+                if (!player2.attacking) {
+                    player2.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                }
             }
         }, (1000 / 60));
     }
 
-    function getKeyPresses() {
+    function getKeyPresses(currentFrame) {
         if (keys[87]) {
             console.log("w - Player 1 up");
             player1.jump(context);
@@ -122,6 +166,10 @@ $(document).ready(function () {
             else {
                 player1.setCurrentAnimation("backwards");
             }
+        }
+        if (keys[69]) {
+            console.log("e - Player 1 attack");
+            player1.attack(context);
         }
         if (keys[38]) {
             console.log("up arrow - Player 2 up");
@@ -147,6 +195,11 @@ $(document).ready(function () {
                 player2.setCurrentAnimation("backwards");
             }
         }
+        if (keys[36]) {
+            console.log("Home - Player 2 attack");
+            player2.attack(context);
+        }
+
 
         // TODO: Attack keys
     }
@@ -160,6 +213,9 @@ $(document).ready(function () {
         player1.loadAnimation("backwards_rev", "images/Player1/Player1_Backwards_Rev.png");
         player1.loadAnimation("sword_idle", "images/Player1/Player1_Sword_Idle.png");
         player1.loadAnimation("sword_idle_rev", "images/Player1/Player1_Sword_Idle_Rev.png");
+        player1.loadAnimation("sword_attack", "images/Player1/Player1_Sword_Attack.png");
+        player1.loadAnimation("sword_attack_rev", "images/Player1/Player1_Sword_Attack_Rev.png");
+
 
         player2.loadAnimation("idle", "images/Player2/Player2_Idle.png");
         player2.loadAnimation("idle_rev", "images/Player2/Player2_Idle_Rev.png");
@@ -169,6 +225,8 @@ $(document).ready(function () {
         player2.loadAnimation("backwards_rev", "images/Player2/Player2_Backwards_Rev.png");
         player2.loadAnimation("sword_idle", "images/Player2/Player2_Sword_Idle.png");
         player2.loadAnimation("sword_idle_rev", "images/Player2/Player2_Sword_Idle_Rev.png");
+        player2.loadAnimation("sword_attack", "images/Player2/Player2_Sword_Attack.png");
+        player2.loadAnimation("sword_attack_rev", "images/Player2/Player2_Sword_Attack_Rev.png");
     }
 
 });
@@ -191,8 +249,6 @@ class Player {
      * @param playerStartY
      */
     constructor(playerNumber, playerColor, playerSizeX, playerSizeY, vx, vy, playerStartX, playerStartY) {
-        this.playerNumber = playerNumber;
-        this.playerColor = playerColor;
         this.playerSizeX = playerSizeX;
         this.playerSizeY = playerSizeY;
         this.vx = vx;
@@ -212,6 +268,7 @@ class Player {
         this.sprite_wy;
         this.sprite_ww;
         this.sprite_wh;
+        this.attacking = false;
 
     }
 
@@ -257,11 +314,23 @@ class Player {
     }
 
     drawWeapon(context) {
-        var x = this.playerX + this.playerSizeX - 30;
-        if (this.reverseAnimation) {
-            x = this.playerX - 30;
+        var x;
+        var y;
+        if (this.attacking) {
+            x = this.playerX - (this.sprite_ww * .75);
+            y = this.playerY + 10;
+            if (this.reverseAnimation) {
+                x = this.playerX + (this.sprite_ww * .57);
+            }
         }
-        context.drawImage(this.weaponImage, this.sprite_wx, this.sprite_wy, this.sprite_ww, this.sprite_wh, x, this.playerY - 35, this.sprite_ww, this.sprite_wh);
+        else {
+            x = this.playerX + this.playerSizeX - (this.sprite_ww / 2);
+            y = this.playerY - 35;
+            if (this.reverseAnimation) {
+                x = this.playerX - (this.sprite_ww / 2);
+            }
+        }
+        context.drawImage(this.weaponImage, this.sprite_wx, this.sprite_wy, this.sprite_ww, this.sprite_wh, x, y, this.sprite_ww, this.sprite_wh);
     }
 
     setWeapon(weaponAnimation) {
@@ -297,7 +366,6 @@ class Player {
         this.vy *= 0.9;
         this.vx *= 0.8;
         this.draw(context);
-        this.drawWeapon(context);
     }
 
     otherPlayerCollision() {
@@ -330,11 +398,6 @@ class Player {
     }
 
     attack() {
-        // attack will be called on attack key press
-        // TODO: Possibly have different attacks depending on direction/movement?
-    }
-
-    clear(context) {
-        context.clearRect(this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
+        this.attacking = true;
     }
 }
