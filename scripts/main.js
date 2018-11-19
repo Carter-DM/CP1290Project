@@ -235,17 +235,7 @@ $(document).ready(function () {
  * ===================================
  */
 class Player {
-    /**
-     *
-     * @param playerNumber
-     * @param playerColor
-     * @param playerSizeX
-     * @param playerSizeY
-     * @param vx
-     * @param vy
-     * @param playerStartX
-     * @param playerStartY
-     */
+
     constructor(playerSizeX, playerSizeY, vx, vy, playerStartX, playerStartY) {
         this.playerSizeX = playerSizeX;
         this.playerSizeY = playerSizeY;
