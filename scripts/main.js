@@ -50,7 +50,7 @@ $(document).ready(function () {
 
     var swordAttackCoordinates = [
         [0, 0, 170, 170],          // Frame 0
-        [170, 0, 170, 170],        // Frame 1    - Hitbox live
+        [170, 0, 170, 170],        // Frame 1
         [0, 170, 170, 170],        // Frame 2    - Hitbox live
         [170, 170, 170, 170],      // Frame 3    - Hitbox live
         [0, 340, 170, 170],        // Frame 4
@@ -98,11 +98,12 @@ $(document).ready(function () {
             getKeyPresses(currentFrame);
 
             if (player1.attacking) {
-                hit = true;
-                window.setTimeout(reset, 500);
                 if (player1CoolDown < 60) {
-                    if ((player1CoolDown > 9) && (player1CoolDown < 40)) {
-                        // TODO: In these frames the sword hitbox is live, check for collisions
+                    if ((player1CoolDown > 19) && (player1CoolDown < 40)) {
+                        if (player1.otherPlayerCollision(context)) {
+                            hit = true;
+                            window.setTimeout(reset, 500);
+                        }
                     }
                     player1.setWeapon("sword_attack");
                     player1.updateWeaponFrame(swordAttackCoordinates[Math.floor(player1CoolDown / 10)]);
@@ -123,8 +124,11 @@ $(document).ready(function () {
             }
             if (player2.attacking) {
                 if (player2CoolDown < 60) {
-                    if ((player2CoolDown > 9) && (player2CoolDown < 40)) {
-                        // TODO: In these frames the sword hitbox is live, check for collisions
+                    if ((player2CoolDown > 19) && (player2CoolDown < 40)) {
+                        if (player2.otherPlayerCollision(context)) {
+                            hit = true;
+                            window.setTimeout(reset, 500);
+                        }
                     }
                     player2.setWeapon("sword_attack");
                     player2.updateWeaponFrame(swordAttackCoordinates[Math.floor(player2CoolDown / 10)]);
@@ -427,8 +431,37 @@ class Player {
     }
 
 
-    otherPlayerCollision() {
-        // TODO: Check if sword intersects with other player hitbox
+    otherPlayerCollision(context) {
+        var weaponCorners;
+
+        if (this.reverseAnimation) {
+            weaponCorners = [
+                [(this.playerX + (this.sprite_ww * .57)), (this.playerY + 10)],                                                 // Top right
+                [(this.playerX + (this.sprite_ww * .57) + this.sprite_ww), (this.playerY + 10)],                                // Top left
+                [(this.playerX + (this.sprite_ww * .57)), (this.playerY + 10 + (this.sprite_wh * .25))],                        // Bottom right
+                [(this.playerX + (this.sprite_ww * .57) + this.sprite_ww), (this.playerY + 10 + (this.sprite_wh * .25))]        // Bottom left
+
+            ];
+        }
+        else {
+            weaponCorners = [
+                [(this.playerX - (this.sprite_ww * .75)), (this.playerY + 10)],                                                 // Top right
+                [(this.playerX - (this.sprite_ww * .75) + this.sprite_ww), (this.playerY + 10)],                                // Top left
+                [(this.playerX - (this.sprite_ww * .75)), (this.playerY + 10 + (this.sprite_wh * .25))],                        // Bottom right
+                [(this.playerX - (this.sprite_ww * .75) + this.sprite_ww), (this.playerY + 10 + (this.sprite_wh * .25))]        // Bottom left
+            ];
+        }
+
+        for (var i = 0; i < 4; i++) {
+
+            // Checking if weapon coordinate is within the other players' hitbox
+            if ((weaponCorners[i][0] >= this.otherPlayer.playerX) && (weaponCorners[i][0]) <= this.otherPlayer.playerX + this.otherPlayer.playerSizeX) {
+                if ((weaponCorners[i][1] >= this.otherPlayer.playerY) && (weaponCorners[i][1] <= this.otherPlayer.playerY + this.otherPlayer.playerSizeY)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     otherPlayerWeaponCollision() {
