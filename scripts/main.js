@@ -7,6 +7,10 @@ $(document).ready(function () {
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
 
+    let player1Score = 0;
+    let player2Score = 0;
+    let hit = false;
+
     const PLAYER_SIZE_X = 140;
     const PLAYER_SIZE_Y = 170;
     const PLAYER_VELOCITY_X = 0;
@@ -74,6 +78,7 @@ $(document).ready(function () {
      * ==============================
      */
     function gameLoop() {
+        hit = false;
         var currentFrame = 0;
         var player1CoolDown = 0;
         var player2CoolDown = 0;
@@ -93,28 +98,43 @@ $(document).ready(function () {
             getKeyPresses(currentFrame);
 
             if (player1.attacking) {
-                player1.setWeapon("sword_attack");
-                player1.updateWeaponFrame(swordAttackCoordinates[Math.floor(player1CoolDown / 10)]);
-                player1CoolDown++;
-                if ((player1CoolDown > 9) && (player1CoolDown < 40)) {
-                    // TODO: In these frames the sword hitbox is live, check for collisions
+                hit = true;
+                window.setTimeout(reset, 500);
+                if (player1CoolDown < 60) {
+                    if ((player1CoolDown > 9) && (player1CoolDown < 40)) {
+                        // TODO: In these frames the sword hitbox is live, check for collisions
+                    }
+                    player1.setWeapon("sword_attack");
+                    player1.updateWeaponFrame(swordAttackCoordinates[Math.floor(player1CoolDown / 10)]);
                 }
-                if (player1CoolDown == 60) {
+                else {
+                    player1.setWeapon("sword_idle");
+                    player1.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                }
+                player1CoolDown += 2;
+                if (player1CoolDown >= 120) {
                     player1.attacking = false;
                     player1CoolDown = 0;
                 }
             }
             if (!player1.attacking) {
                 player1.setWeapon("sword_idle");
+
             }
             if (player2.attacking) {
-                player2.setWeapon("sword_attack");
-                player2.updateWeaponFrame(swordAttackCoordinates[Math.floor(player2CoolDown / 10)]);
-                player2CoolDown++;
-                if ((player2CoolDown > 9) && (player2CoolDown < 40)) {
-                    // TODO: In these frames the sword hitbox is live, check for collisions
+                if (player2CoolDown < 60) {
+                    if ((player2CoolDown > 9) && (player2CoolDown < 40)) {
+                        // TODO: In these frames the sword hitbox is live, check for collisions
+                    }
+                    player2.setWeapon("sword_attack");
+                    player2.updateWeaponFrame(swordAttackCoordinates[Math.floor(player2CoolDown / 10)]);
                 }
-                if (player2CoolDown == 60) {
+                else {
+                    player2.setWeapon("sword_idle");
+                    player2.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                }
+                player2CoolDown += 2;
+                if (player2CoolDown >= 120) {
                     player2.attacking = false;
                     player2CoolDown = 0;
                 }
@@ -123,30 +143,56 @@ $(document).ready(function () {
                 player2.setWeapon("sword_idle");
             }
 
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            player2.update(context);
-            player1.update(context);
+            if (!hit) {
+                context.clearRect(0, 0, canvas.width, canvas.height);
 
-            // I could put draw weapon in update but I want to have player2's sword overlap player1
-            player2.drawWeapon(context);
-            player1.drawWeapon(context);
+                player1.drawBanner(context, 0, 30, player1Score);
+                player2.drawBanner(context, canvas.width - 240, 30, player2Score);
 
-            currentFrame++;
+                player2.update(context);
+                player1.update(context);
 
-            if (currentFrame == 60) {
-                currentFrame = 0;
-            }
-            if (currentFrame % 10 == 0) {
-                player1.updateFrame(playerSpriteCoordinates[Math.floor(currentFrame / 10)]);
-                player2.updateFrame(playerSpriteCoordinates[Math.floor(currentFrame / 10)]);
-                if (!player1.attacking) {
-                    player1.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                player2.drawWeapon(context, player2CoolDown);
+                player1.drawWeapon(context, player1CoolDown);
+
+                currentFrame++;
+
+                if (currentFrame == 60) {
+                    currentFrame = 0;
                 }
-                if (!player2.attacking) {
-                    player2.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                if (currentFrame % 10 == 0) {
+                    player1.updateFrame(playerSpriteCoordinates[Math.floor(currentFrame / 10)]);
+                    player2.updateFrame(playerSpriteCoordinates[Math.floor(currentFrame / 10)]);
+                    if (!player1.attacking) {
+                        player1.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                    }
+                    if (!player2.attacking) {
+                        player2.updateWeaponFrame(swordIdleCoordinates[Math.floor(currentFrame / 10)]);
+                    }
                 }
             }
+
+
         }, (1000 / 60));
+    }
+
+    function reset() {
+        console.log("reset");
+
+        player1.vx = PLAYER_VELOCITY_X;
+        player1.vy = PLAYER_VELOCITY_Y;
+        player1.playerX = PLAYER1_STARTX;
+        player1.playerY = PLAYER1_STARTY;
+        player1.attacking = false;
+
+        player2.vx = PLAYER_VELOCITY_X;
+        player2.vy = PLAYER_VELOCITY_Y;
+        player2.playerX = PLAYER2_STARTX;
+        player2.playerY = PLAYER2_STARTY;
+        player2.attacking = false;
+
+        hit = false;
+
     }
 
     function getKeyPresses(currentFrame) {
@@ -203,6 +249,7 @@ $(document).ready(function () {
     }
 
     function loadAnimations(player1, player2) {
+        player1.loadAnimation("banner", "images/Player1/Player1_Banner.png");
         player1.loadAnimation("idle", "images/Player1/Player1_Idle.png");
         player1.loadAnimation("idle_rev", "images/Player1/Player1_Idle_Rev.png");
         player1.loadAnimation("forward", "images/Player1/Player1_Forward.png");
@@ -215,6 +262,7 @@ $(document).ready(function () {
         player1.loadAnimation("sword_attack_rev", "images/Player1/Player1_Sword_Attack_Rev.png");
 
 
+        player2.loadAnimation("banner", "images/Player2/Player2_Banner.png");
         player2.loadAnimation("idle", "images/Player2/Player2_Idle.png");
         player2.loadAnimation("idle_rev", "images/Player2/Player2_Idle_Rev.png");
         player2.loadAnimation("forward", "images/Player2/Player2_Forward.png");
@@ -264,6 +312,28 @@ class Player {
         context.drawImage(this.animation, this.sprite_x, this.sprite_y, this.sprite_w, this.sprite_h, this.playerX, this.playerY, this.playerSizeX, this.playerSizeY);
     }
 
+    drawBanner(context, x, y, score) {
+        context.drawImage(this.animationMap.get("banner"), x, y);
+        context.font = "48px Arial";
+        context.textAlign = "center";
+        context.lineWidth = 2;
+        context.fillStyle = "#c4a724";
+        context.textBaseline = "middle";
+
+        if (score > 99) {
+            score = 99;
+        }
+
+        if (x == 0) {
+            context.fillText(score + " pts", x + 100, y + 60);
+            context.strokeText(score + " pts", x + 100, y + 60);
+        }
+        else {
+            context.fillText(score + " pts", x + 135, y + 60);
+            context.strokeText(score + " pts", x + 135, y + 60);
+        }
+    }
+
     setCurrentAnimation(animation) {
         if (this.reverseAnimation) {
             this.animation = this.animationMap.get(animation + "_rev");
@@ -301,10 +371,10 @@ class Player {
         this.sprite_wh = coordinates[3];
     }
 
-    drawWeapon(context) {
+    drawWeapon(context, cooldown) {
         var x;
         var y;
-        if (this.attacking) {
+        if (cooldown < 60 && cooldown > 0) {
             x = this.playerX - (this.sprite_ww * .75);
             y = this.playerY + 10;
             if (this.reverseAnimation) {
