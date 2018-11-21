@@ -103,6 +103,7 @@ $(document).ready(function () {
                         if (player1.otherPlayerCollision(context)) {
                             hit = true;
                             window.setTimeout(reset, 500);
+                            player1Score++;
                         }
                     }
                     player1.setWeapon("sword_attack");
@@ -127,6 +128,7 @@ $(document).ready(function () {
                     if ((player2CoolDown > 19) && (player2CoolDown < 40)) {
                         if (player2.otherPlayerCollision(context)) {
                             hit = true;
+                            player2Score++;
                             window.setTimeout(reset, 500);
                         }
                     }

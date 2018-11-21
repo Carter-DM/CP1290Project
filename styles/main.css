@@ -15,17 +15,13 @@ body{
     border-right-width: 20px;
     border-bottom-width: 20px;
     border-left-width: 20px;
-    background-color: white;
+    background-color: #343434;
 }
 
 body > header{
     width: 100%;
 }
-.logo {
-    width: 60px;
-    height: 60px;
-    vertical-align: middle;
-}
+
 body > header > nav > ul {
     display: table-row;
     background-color:black;
@@ -59,4 +55,10 @@ canvas {
 
 h2 {
     font-family: "Calibri Light";
+}
+
+.slideshow {
+    width: 100%;
+    border: 3px solid black;
+    display: block;
 }
