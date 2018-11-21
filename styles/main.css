@@ -4,7 +4,7 @@
 }
 
 html{
-    background-color: purple;
+    background-image: url("../images/site_BG.png");
 }
 
 body{
@@ -15,7 +15,7 @@ body{
     border-right-width: 20px;
     border-bottom-width: 20px;
     border-left-width: 20px;
-    background-color: #343434;
+    background-color: white;
 }
 
 body > header{
@@ -53,12 +53,18 @@ canvas {
     display: block;
 }
 
-h2 {
+h1 {
     font-family: "Calibri Light";
 }
 
 .slideshow {
     width: 100%;
-    border: 3px solid black;
     display: block;
+}
+
+#homepage_about {
+    font-family: "Calibri Light";
+    width: 100%;
+    display: block;
+    padding: 0px 20px 0px 20px;
 }
