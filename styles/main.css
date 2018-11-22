@@ -25,6 +25,13 @@ body > header{
     width: 100%;
 }
 
+h2 {
+    font-weight: normal;
+    padding-left: 15px;
+    font-family: Verdana;
+
+}
+
 body > header > nav > ul {
     display: table-row;
     background-color:black;
@@ -70,4 +77,26 @@ h1 {
     width: 100%;
     display: block;
     padding: 0px 20px 0px 20px;
+}
+
+
+/* Form styles */
+form label, form input, form select{
+    margin: 5px 0px 10px 10px;
+}
+form{
+
+    padding: 0px 5px 10px 5px;
+    color: #3f1938;
+    font-family: Verdana;
+    font-size: 20px;
+}
+form label{
+    font-weight: bold;
+    font-size: 14px;
+    font-family: Verdana;
+    color: #0c4d1b;
+}
+form textarea{
+    margin-bottom: 10px;
 }
