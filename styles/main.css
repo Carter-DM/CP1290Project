@@ -3,11 +3,11 @@
     box-sizing: border-box;
 }
 
-html{
+html {
     background-image: url("../images/site_BG.png");
 }
 
-body{
+body {
     margin: 0 auto;
     width: 100%;
     width: 1240px;
@@ -16,12 +16,12 @@ body{
     border-bottom-width: 20px;
     border-left-width: 20px;
     background-color: white;
-    -webkit-box-shadow: 0px 15px 71px 5px rgba(0,0,0,0.75);
-    -moz-box-shadow: 0px 15px 71px 5px rgba(0,0,0,0.75);
-    box-shadow: 0px 15px 71px 5px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 15px 71px 5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 15px 71px 5px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 15px 71px 5px rgba(0, 0, 0, 0.75);
 }
 
-body > header{
+body > header {
     width: 100%;
 }
 
@@ -34,26 +34,28 @@ h2 {
 
 body > header > nav > ul {
     display: table-row;
-    background-color:black;
+    background-color: black;
 }
 
-body > header > nav > ul > li{
+body > header > nav > ul > li {
     width: 300px;
     display: table-cell;
     text-align: center;
-    color:white;
-    padding:10px;
+    color: white;
+    padding: 10px;
 
 }
-body > header > nav > ul > li > a{
+
+body > header > nav > ul > li > a {
     display: block;
-    color:white;
+    color: white;
     text-decoration: none;
     font-family: "Calibri Light";
     font-size: 1.2em;
 }
-body > header > nav > ul > li:hover, body > header > nav > ul > li:active{
-    color:white;
+
+body > header > nav > ul > li:hover, body > header > nav > ul > li:active {
+    color: white;
     background-color: #494949;
 }
 
@@ -79,24 +81,27 @@ h1 {
     padding: 0px 20px 0px 20px;
 }
 
-
 /* Form styles */
-form label, form input, form select{
+form label, form input, form select {
     margin: 5px 0px 10px 10px;
 }
-form{
+
+form {
 
     padding: 0px 5px 10px 5px;
     color: #3f1938;
     font-family: Verdana;
     font-size: 20px;
 }
-form label{
-    font-weight: bold;
-    font-size: 14px;
+
+form label {
+    width: 11em;
+    text-align: right;
     font-family: Verdana;
-    color: #0c4d1b;
 }
-form textarea{
-    margin-bottom: 10px;
+
+form input {
+    width: 12em;
+    margin-left: 1em;
+    margin-bottom: .5em;
 }

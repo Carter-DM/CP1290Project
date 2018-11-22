@@ -5,7 +5,7 @@ $(document).ready(function() {
                 required: true,
                 email: true
             },
-            email2: {
+            email_2: {
                 required: true,
                 email: true,
                 equalTo: "#email"
