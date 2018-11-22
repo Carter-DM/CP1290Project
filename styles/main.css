@@ -67,6 +67,13 @@ canvas {
 
 h1 {
     font-family: "Calibri Light";
+    padding: 0px 20px 0px 20px;
+}
+
+h3 {
+    font-family: "Calibri Light";
+    display: block;
+    padding: 0px 20px 0px 20px;
 }
 
 .slideshow {
@@ -74,7 +81,7 @@ h1 {
     display: block;
 }
 
-#homepage_about {
+p {
     font-family: "Calibri Light";
     width: 100%;
     display: block;
@@ -89,7 +96,6 @@ form label, form input, form select {
 form {
 
     padding: 0px 5px 10px 5px;
-    color: #3f1938;
     font-family: Verdana;
     font-size: 20px;
 }
@@ -98,8 +104,12 @@ form label {
     width: 11em;
     text-align: right;
     font-family: Verdana;
+    font-size: 14px;
 }
 
+form label.error {
+    color: red;
+}
 form input {
     width: 12em;
     margin-left: 1em;

@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <title>CP1290 Project</title>
     <link rel="stylesheet" href="./styles/main.css">
-    <script type="javascript" src="scripts/mailing.js"></script>
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.validate/1.11.1/additional-methods.js"></script>
+    <script src="scripts/mailing.js"></script>
 </head>
 <body>
 <header>
@@ -20,25 +23,24 @@
 </header>
 <div>
     <h2>Stay up to date! Join our mailing list!</h2>
-    <form id = "mailing_form" action="index.html" method="post">
+    <form id ="mailing_form" action="index.html" method="post">
+        <div>
+            <label for="f_name">First Name:</label>
+            <input type="text" id="f_name" name="f_name"><br>
 
-        <label for="f_name">First Name:</label>
-        <input type="text" id="f_name" name="first_name"><br>
-
-        <label for="l_name">Last Name:</label>
-        <input type="text" id="l_name" name="last_name"><br>
-
+            <label for="l_name">Last Name:</label>
+            <input type="text" id="l_name" name="l_name"><br>
+        </div>
         <label for="email1">Email Address:</label>
-        <input type="text" id="email1" name="email_1"><br>
+        <input type="text" id="email1" name="email"><br>
 
-        <label for="email_2">Re-enter Email Address:</label>
-        <input type="text" id="email_2" name="email_2"><br>
+        <label for="email2">Re-enter Email Address:</label>
+        <input type="text" id="email2" name="email2"><br>
 
         <label>&nbsp;</label>
         <input type="submit" id="join" name="join" value="Join our List">
         <input type="reset" id="reset" name="reset" value="Reset"><br>
 
-        </fieldset>
     </form>
 </div>
 </body>
