@@ -87,6 +87,39 @@ p {
     display: block;
     padding: 0px 20px 0px 20px;
 }
+/*
+===================
+       GAME
+===================
+ */
+
+#controls {
+    font-size: 24px;
+    font-family: Verdana;
+    color: gold;
+    background-color: #1a091c;
+}
+
+#controls h3 {
+    padding-left: 0px;
+}
+
+#controlsP1 {
+    display: inline-block;
+    width: 49%;
+    text-align: center;
+    padding-right: 10px;
+}
+
+#controlsP2 {
+    display: inline-block;
+    width: 49%;
+    text-align: center;
+}
+
+li {
+    list-style-type: none;
+}
 
 /* Form styles */
 form label, form input, form select {
@@ -94,7 +127,6 @@ form label, form input, form select {
 }
 
 form {
-
     padding: 0px 5px 10px 5px;
     font-family: Verdana;
     font-size: 20px;
@@ -110,8 +142,23 @@ form label {
 form label.error {
     color: red;
 }
+
 form input {
     width: 12em;
     margin-left: 1em;
     margin-bottom: .5em;
+}
+
+/*
+===================
+     ABOUT US
+===================
+ */
+
+#about_us {
+    display: block;
+}
+aside {
+    padding: 0px 0px 10px 10px;
+    display: block;
 }
